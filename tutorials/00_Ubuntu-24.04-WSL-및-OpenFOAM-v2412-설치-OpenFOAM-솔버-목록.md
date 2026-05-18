@@ -5,6 +5,8 @@
 - 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포된다.
 - 이 자료는 ESI Group, ESI-OpenCFD 또는 OpenFOAM Foundation에 의해 승인된 자료가 아니다.
 
+---
+
 ## 목차
 
 1. WSL을 이용한 Ubuntu 24.04 설치 (Windows 11)
