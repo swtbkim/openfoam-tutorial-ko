@@ -219,7 +219,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `overPotentialFoam` | 퍼텐셜 유동 해석. overset 격자 |
 | `scalarTransportFoam` | 수동적 스칼라량의 수송 방정식 해석 |
 
-![다이어그램 - 기본 해석 솔버](./figures/0_diagram_basic.png)
+![다이어그램 - 기본 해석 솔버](../figures/0_diagram_basic.png)
 
 ### 3.2 비압축성 유동 해석
 
@@ -239,7 +239,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `boundaryFoam` | 정상상태 비압축성 1차원 난류 유동 해석. 입구에서의 경계층 조건을 생성하기 위해 활용 |
 | `adjointShapeOptimizationFoam` | 정상상태 비압축성 난류 유동. 비뉴턴 유체. adjoint 식을 이용해 예측한 압력 강하 유발 영역에 blockage를 적용하여 유로 형상 최적화 |
 
-![다이어그램 - 비압축성 유동 해석 솔버](./figures/0_diagram_incompressible.png)
+![다이어그램 - 비압축성 유동 해석 솔버](../figures/0_diagram_incompressible.png)
 
 ### 3.3 압축성 유동 해석
 
@@ -255,7 +255,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `sonicLiquidFoam` | 비정상상태 압축성 액체의 천음속/초음속 난류 유동 |
 | `sonicDyMFoam` | 비정상상태 압축성 기체의 천음속/초음속 난류 유동. 이동 격자 및 격자 위상 변환 |
 
-![다이어그램 - 압축성 유동 해석 솔버](./figures/0_diagram_compressible.png)
+![다이어그램 - 압축성 유동 해석 솔버](../figures/0_diagram_compressible.png)
 
 ### 3.4 열전달 해석
 
@@ -272,7 +272,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `solidFoam` | 고체 내 열전달 및 열역학 해석 |
 | `thermoFoam` | 고정된(frozen) 유동장 내 열전달 및 열역학 해석 |
 
-![다이어그램 - 열전달 해석 솔버](./figures/0_diagram_heat.png)
+![다이어그램 - 열전달 해석 솔버](../figures/0_diagram_heat.png)
 
 ### 3.5 연소 해석
 
@@ -288,7 +288,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `XiFoam` | 압축성 난류 예혼합/부분예혼합 연소 해석 |
 | `XiDyMFoam` | 압축성 난류 예혼합/부분예혼합 연소 해석. 이동 격자 |
 
-![다이어그램 - 연소 해석 솔버](./figures/0_diagram_combustion.png)
+![다이어그램 - 연소 해석 솔버](../figures/0_diagram_combustion.png)
 
 ### 3.6 다상 유동 해석
 
@@ -339,7 +339,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `potentialFreeSurfaceFoam` | 자유 표면 유동 해석. 퍼텐셜 유동 기반 |
 | `potentialFreeSurfaceDyMFoam` | `potentialFreeSurfaceFoam` + 이동 격자 |
 
-![다이어그램 - 다상 유동 해석 솔버](./figures/0_diagram_multiphase.png)
+![다이어그램 - 다상 유동 해석 솔버](../figures/0_diagram_multiphase.png)
 
 ### 3.7 입자 거동 해석
 
@@ -359,7 +359,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `DPMFoam` | Dense Particulate Model. 고밀도 입자 유동 |
 | `MPPICFoam` | Multi-Phase Particle-In-Cell 방법. 다상 PIC |
 
-![다이어그램 - 입자 거동 해석 솔버](./figures/0_diagram_lagrangian.png)
+![다이어그램 - 입자 거동 해석 솔버](../figures/0_diagram_lagrangian.png)
 
 ### 3.8 표면/막 해석
 
@@ -369,7 +369,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `surfactantFoam` | 계면 활성제(surfactant) 수송 해석 |
 | `sphereSurfactantFoam` | 구 표면 위 계면 활성제 수송 해석 |
 
-![다이어그램 - 표면/막 해석 솔버](./figures/0_diagram_finite.png)
+![다이어그램 - 표면/막 해석 솔버](../figures/0_diagram_finite.png)
 
 ### 3.9 전자기장 해석
 
@@ -379,7 +379,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `magneticFoam` | 영구 자석으로부터 생성되는 자기장 해석 |
 | `mhdFoam` | 자기수력학 해석. 비압축성 층류 유동 |
 
-![다이어그램 - 전자기장 해석 솔버](./figures/0_diagram_electro.png)
+![다이어그램 - 전자기장 해석 솔버](../figures/0_diagram_electro.png)
 
 ### 3.10 분자 동역학 해석
 
@@ -389,7 +389,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `mdFoam` | 유체역학을 위한 분자 동역학 해석 |
 | `mdEquilibrationFoam` | 분자 동역학 계의 전처리 |
 
-![다이어그램 - 분자 동역학 해석 솔버](./figures/0_diagram_discrete.png)
+![다이어그램 - 분자 동역학 해석 솔버](../figures/0_diagram_discrete.png)
 
 ### 3.11 직접 수치 모사
 
@@ -397,7 +397,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | :--- | :--- |
 | `dnsFoam` | 등방성 난류의 직접 수치 모사 |
 
-![다이어그램 - DNS 해석 솔버](./figures/0_diagram_direct.png)
+![다이어그램 - DNS 해석 솔버](../figures/0_diagram_direct.png)
 
 ### 3.12 응력-변형률 해석
 
@@ -406,7 +406,7 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | `solidDisplacementFoam` | 비정상상태 고체 변위(displacement) 해석. 선형 탄성 및 열탄성 |
 | `solidEquilibriumDisplacementFoam` | 정상상태 고체 평형 변위 해석. 선형 탄성 |
 
-![다이어그램 - 구조 해석 솔버](./figures/0_diagram_stress.png)
+![다이어그램 - 구조 해석 솔버](../figures/0_diagram_stress.png)
 
 ### 3.13 금융 해석
 
@@ -414,4 +414,4 @@ alias src='cd ${WM_PROJECT_DIR:?}/src'
 | :--- | :--- |
 | `financialFoam` | Black-Scholes 방정식 기반 옵션 가격 결정 |
 
-![다이어그램 - 금융 해석 솔버](./figures/0_diagram_financial.png)
+![다이어그램 - 금융 해석 솔버](../figures/0_diagram_financial.png)

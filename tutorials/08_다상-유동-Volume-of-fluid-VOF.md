@@ -4,7 +4,7 @@
 
 - 이 책은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials))를 번역한 것이다.
 - 필요한 경우에는 글을 의역하거나 내용을 보충하였으나, 전체적인 흐름을 바꾸는 정도의 수정은 없었으므로 수정 내용을 별도로 표시하지는 않았다.
-- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](./LICENSE.md)를 참고한다.
+- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](../LICENSE.md)를 참고한다.
 - 이 자료는 ESI Group, ESI-OpenCFD 또는 OpenFOAM Foundation에 의해 승인된 자료가 아니다.
 
 **호환성**:
@@ -197,4 +197,4 @@ interFoam
 
 해석 결과는 아래와 같다. (아래 결과는 원래의 격자를 2배 세분할하여 해석한 결과이다.)
 
-![시간 단계 별 물의 체적 분율의 등치선 플롯](./figures/8_result1.jpg)
+![시간 단계 별 물의 체적 분율의 등치선 플롯](../figures/8_result1.jpg)

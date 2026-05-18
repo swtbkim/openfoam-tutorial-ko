@@ -4,7 +4,7 @@
 
 - 이 책은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials))를 번역한 것이다.
 - 필요한 경우에는 글을 의역하거나 내용을 보충하였으나, 전체적인 흐름을 바꾸는 정도의 수정은 없었으므로 수정 내용을 별도로 표시하지는 않았다.
-- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](./LICENSE.md)를 참고한다.
+- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](../LICENSE.md)를 참고한다.
 - 이 자료는 ESI Group, ESI-OpenCFD 또는 OpenFOAM Foundation에 의해 승인된 자료가 아니다.
 
 **호환성**:
@@ -332,10 +332,10 @@ rhoPimpleFoam
 
 ParaView를 통해, 3개의 블록으로 생성된 격자를 확인할 수 있다.
 
-![`blockMesh`로 생성한 격자](./figures/2_mesh.jpg)
+![`blockMesh`로 생성한 격자](../figures/2_mesh.jpg)
 
 > **Note:** ParaView에서 `Slice`를 생성하면, 사각 격자를 생성했음에도 그 평면에서의 격자는 삼각 격자로 나타난다. 이는 ParaView가 가시화를 위해 사각 격자를 2개의 삼각 격자로 표현하기 때문에 발생하는 현상이다. `Slice`를 생성할 때  `Properties > Triangulate the slice`를 해제하면 위 그림처럼 원본 격자를 나타낼 수 있다.
 
 해석 결과는 아래와 같다.
 
-![시간 별 압력, 속도, 온도의 등치선](./figures/2_result.jpg)
+![시간 별 압력, 속도, 온도의 등치선](../figures/2_result.jpg)

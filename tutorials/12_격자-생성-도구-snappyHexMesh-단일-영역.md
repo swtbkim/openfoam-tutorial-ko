@@ -4,7 +4,7 @@
 
 - 이 책은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials))를 번역한 것이다.
 - 필요한 경우에는 글을 의역하거나 내용을 보충하였으나, 전체적인 흐름을 바꾸는 정도의 수정은 없었으므로 수정 내용을 별도로 표시하지는 않았다.
-- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](./LICENSE.md)를 참고한다.
+- 이 자료는 [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포되며, 원저작권은 TU Wien에 있다. 기여자 및 라이선스 상세 내용은 [LICENSE.md](../LICENSE.md)를 참고한다.
 - 이 자료는 ESI Group, ESI-OpenCFD 또는 OpenFOAM Foundation에 의해 승인된 자료가 아니다.
 
 **호환성**:
@@ -263,7 +263,7 @@ geometry
 
 Castellating 단계에서는 배경 격자를 더 작은 단위로 분할하고, 그 중 불필요한 부분을 제거한다. 배경 격자는 `level 0` 격자라고도 부른다. `level`을 1로 설정하면 배경 격자는 각 방향으로 절반으로 분할되어, 3차원의 경우 1개의 배경 격자가 8개로 분할된다. 즉, 각 레벨마다 격자의 개수는 8배로 증가한다.
 
-![세분할 level](./figures/12_refinement.png)
+![세분할 level](../figures/12_refinement.png)
 
 - `features`: "\*.extendedFeatureEdgeMesh"로 지정된 *날카로운 모서리*에 적용할 세분할 level
 
@@ -400,7 +400,7 @@ blockMesh
 
 blockMeshDict의 설정에 따라서 x, y, z 방향으로 각각 20, 16, 12개의 배경 격자가 생성된다.
 
-![플랜지 해석을 위한 배경 격자](./figures/12_blockmeshforflange.jpg)
+![플랜지 해석을 위한 배경 격자](../figures/12_blockmeshforflange.jpg)
 
 ```bash
 surfaceFeatures
@@ -420,7 +420,7 @@ snappyHexMesh
 
 `snappyHexMesh`를 이용해 격자를 생성하면 각 격자 생성 단계마다 디렉토리를 생성하고 생성된 디렉토리에 격자 파일을 저장한다. 예를 들어, `castellatedMesh`만 true로 지정하고 `snap`과 `addLayers`는 false로 지정하면 새로운 디렉토리는 하나만 생성된다. `snap`도 true로 지정된 경우에는 2개의 디렉토리가, 그리고 `addLayers`까지 true로 지정된 경우에는 총 3개의 디렉토리가 생성되고 각 디렉토리에는 polyMesh/ 디렉토리가 하나씩 생성된다.
 
-![`snappyHexMesh` 실행 후 디렉토리 구조](./figures/12_snappyhexmeshfolder1.jpg)
+![`snappyHexMesh` 실행 후 디렉토리 구조](../figures/12_snappyhexmeshfolder1.jpg)
 
 각 단계마다 디렉토리가 생성되도록 하지 않고 최종적으로 생성된 격자만 저장할 때는 아래와 같이 overwrite 플래그를 사용하여 이전 격자 생성 단계의 데이터를 덮어쓴다.
 
@@ -428,7 +428,7 @@ snappyHexMesh
 snappyHexMesh -overwrite
 ```
 
-![`snappyHexMesh -overwrite` 실행 후 디렉토리 구조](./figures/12_snappyhexmeshfolder2.jpg)
+![`snappyHexMesh -overwrite` 실행 후 디렉토리 구조](../figures/12_snappyhexmeshfolder2.jpg)
 
 이 경우에는 polyMesh/ 디렉토리가 constant/ 디렉토리에만 1개 생성된다. 그러나, 때로는 overwrite 플래그를 사용하지 않고 `snappyHexMesh`를 실행하는 것이 유용하다. 각 격자 생성 단계를 별도로 저장하면 특정 단계에서 격자를 수정하고자 할 때 모든 단계를 다시 실행하지 않아도 되기 때문에 계산 시간을 줄일 수 있다.
 
@@ -442,17 +442,17 @@ foamToVTK
 
 ParaView의 Time을 바꿔서 `snappyHexMesh`의 각 단계 별 격자 상태를 확인할 수 있다. 즉, Time 1은 castellating 단계의 격자이고 Time 2는 snapping, Time 3은 layering 단계가 적용된 격자이다.
 
-![castellating 단계의 격자 (면 세분할 레벨 2)](./figures/12_flangeparaview1.jpg)
+![castellating 단계의 격자 (면 세분할 레벨 2)](../figures/12_flangeparaview1.jpg)
 
-![castellating 단계의 격자 (면 세분할 레벨 3)](./figures/12_flangeparaview2.jpg)
+![castellating 단계의 격자 (면 세분할 레벨 3)](../figures/12_flangeparaview2.jpg)
 
-![snapping 단계의 격자 (면 세분할 레벨 3)](./figures/12_flangeparaview3.jpg)
+![snapping 단계의 격자 (면 세분할 레벨 3)](../figures/12_flangeparaview3.jpg)
 
-![layering 단계의 격자 (면 세분할 레벨 3)](./figures/12_flangeparaview4.jpg)
+![layering 단계의 격자 (면 세분할 레벨 3)](../figures/12_flangeparaview4.jpg)
 
 위 그림들은 플랜지의 단면에서 격자를 나타낸 것으로, 각각 Castellating 단계 격자 (`refinementSurfaces (2, 2)`), Castellating 단계 격자 (`refinementSurfaces (3, 3)`), Snapping 단계 격자(`refinementSurfaces (3, 3)`), Layering 단계 격자(`refinementSurfaces (3, 3)`)이다. 단면의 위치는 아래의 그림에 붉은색 평면으로 나타내었다.
 
-![플랜지의 단면 위치](./figures/12_flangeparaviewsection.jpg)
+![플랜지의 단면 위치](../figures/12_flangeparaviewsection.jpg)
 
 격자의 품질은 `checkMesh` 도구로 확인할 수 있다.
 
@@ -524,4 +524,4 @@ scalarTransportFoam
 paraFoam
 ```
 
-![플랜지 내부 온도 변화 (0.0001--0.0005초)](./figures/12_flangeresult.jpg)
+![플랜지 내부 온도 변화 (0.0001--0.0005초)](../figures/12_flangeresult.jpg)
