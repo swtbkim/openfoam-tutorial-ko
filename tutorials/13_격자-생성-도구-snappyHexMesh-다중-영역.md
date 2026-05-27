@@ -295,15 +295,11 @@ PIMPLE
 blockMesh
 ```
 
-단일 영역 해석의 경우와 마찬가지로, `surfaceFeatures` 명령어를 이용해 \*.stl 형식의 형상 정보로부터 eMesh 파일을 생성한다. 또한, constant/ 디렉토리에는 extendedFeatureEdgeMesh/ 디렉토리가 생성된다. `surfaceFeatures` 명령어를 이용해 eMesh 파일을 생성하는 것은 필수적인 단계는 아니며, 특정 edge에 세분할이 필요한 경우에만 사용한다.
+단일 영역 해석의 경우와 마찬가지로, `surfaceFeatures` 명령어를 이용해 \*.stl 형식의 형상 정보로부터 eMesh 파일을 생성한다. 또한, constant/ 디렉토리에는 extendedFeatureEdgeMesh/ 디렉토리가 생성된다. `surfaceFeatureExtract` 명령어를 이용해 eMesh 파일을 생성하는 것은 필수적인 단계는 아니며, 특정 edge에 세분할이 필요한 경우에만 사용한다.
 
 ```bash
-surfaceFeatures
+surfaceFeatureExtract
 ```
-
-> **Note:** OpenFOAM v1906: `surfaceFeatures` $\rightarrow$ `surfaceFeatureExtract`
-
-> **Note:** OpenFOAM v2412: `surfaceFeatures` $\rightarrow$ `surfaceFeatureExtract`
 
 격자 생성을 병렬 처리하기 위해서는 `snappyHexMesh`를 실행하기 전에 먼저 형상을 분할해야 한다. decomposeParDict 파일에 명시된 `numberOfSubdomains` 개수 만큼의 processor/ 디렉토리가 생성된다.
 
