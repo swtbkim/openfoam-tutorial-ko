@@ -332,11 +332,23 @@ rhoPimpleFoam
 
 ### 3.3 후처리
 
-ParaView를 통해, 3개의 블록으로 생성된 격자를 확인할 수 있다.
+ParaView를 통해 3개의 블록으로 생성된 격자를 확인할 수 있다. ParaView 기본 사용법은 [예제 1의 3.3.2](./01_기초-케이스-설정.md#332-paraview-인터페이스와-데이터-구조)에서 다루었고, 본 챕터에서는 새 필터 **Slice**를 도입한다.
+
+**Slice 필터 — 2D 단면 추출**
+
+3D 영역의 내부 분포를 보려면 Slice 필터로 잘라낸다.
+
+1. Pipeline Browser에서 케이스 노드 선택
+2. 메뉴 `Filters > Common > Slice` (단축키 Ctrl+Space로 검색해도 됨)
+3. Properties 패널에서
+   - **Plane Parameters**: `Origin`(절단면이 지나는 점)과 `Normal`(법선)을 설정. 이 케이스는 2D이므로 z=0 평면이 자동 기본값
+   - **Show Plane**: 체크하면 RenderView에 노란 평면이 보여 위치 조정 가능
+   - **Triangulate the slice**: 아래 Note 참고
+4. `Apply`
 
 ![`blockMesh`로 생성한 격자](../figures/2_mesh.jpg)
 
-> **Note:** ParaView에서 `Slice`를 생성하면, 사각 격자를 생성했음에도 그 평면에서의 격자는 삼각 격자로 나타난다. 이는 ParaView가 가시화를 위해 사각 격자를 2개의 삼각 격자로 표현하기 때문에 발생하는 현상이다. `Slice`를 생성할 때  `Properties > Triangulate the slice`를 해제하면 위 그림처럼 원본 격자를 나타낼 수 있다.
+> **Note (Triangulate the slice 옵션):** ParaView에서 `Slice`를 생성하면, 사각 격자를 생성했음에도 그 평면에서의 격자는 삼각 격자로 나타난다. 이는 ParaView가 가시화를 위해 사각 격자를 2개의 삼각 격자로 표현하기 때문에 발생하는 현상이다. `Slice`를 생성할 때 `Properties > Triangulate the slice`를 **해제**하면 위 그림처럼 원본 격자 모양 그대로 나타낼 수 있다.
 
 해석 결과는 아래와 같다.
 

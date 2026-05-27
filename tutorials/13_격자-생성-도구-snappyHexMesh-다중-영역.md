@@ -311,8 +311,6 @@ surfaceFeatures
 decomposePar
 ```
 
-> **Note:** OpenFOAM v2412: `decomposePar` $\rightarrow$ `decomposePar -allRegions -force`
-
 > **Note:** 영역 분할 시 `scotch` 방법을 사용하면 `snappyHexMesh`를 실행하거나 분할된 격자를 재구성하는 과정에서 오류를 일으킬 수 있어서 권장하지 않으며, 대신 `hierarchical`이나 `simple` 방법을 사용하는 것이 좋다.
 
 Castellation, Snapping, Layering 등 각 격자 생성 단계마다 디렉토리가 생성되도록 하지 않고 최종적으로 생성된 격자만 저장할 때는 `-overwrite` 옵션을 사용하여 이전 격자 생성 단계의 데이터를 덮어쓴다.
@@ -396,6 +394,24 @@ paraFoam -region topAir
 touch myCase.foam
 paraview myCase.foam
 ```
+
+전체 영역을 한꺼번에 불러들이면 ParaView는 다중 블록(MultiBlock) 형태로 데이터를 표현한다. 영역별로 색상 스케일을 따로 두거나 일부 영역만 표시하려면 새 필터 **Extract Block**을 사용한다. ParaView 기본 사용법은 [예제 1의 3.3.2](./01_기초-케이스-설정.md#332-paraview-인터페이스와-데이터-구조), 단면(Slice)은 [예제 2](./02_내장-격자-생성-도구-blockMesh.md#33-후처리), 조건부 셀 추출(Threshold)은 [예제 11](./11_화학-반응.md#33-후처리)을 참고한다.
+
+**Extract Block — 다중 영역에서 일부만 분리**
+
+1. Pipeline Browser에서 `myCase.foam` 노드 선택
+2. Properties 패널의 **Mesh Regions**에서 `internalMesh`를 체크 → `Apply` (영역별 메시가 트리로 로드됨)
+3. 메뉴 `Filters > Common > Extract Block`
+4. Properties 패널의 **Block Indices** 트리에서 원하는 영역(예: `heater`, `topAir`)만 체크
+5. `Apply` → 선택된 영역만 RenderView에 남음
+
+**영역별 개별 색상 스케일**
+
+각 영역의 온도 범위가 크게 다르면 공통 스케일이 한쪽을 압축한다. Extract Block으로 영역을 분리한 뒤 각 노드마다 별도의 색상 막대를 띄우면 가독성이 좋아진다.
+
+1. 각 영역에 대해 Extract Block 노드를 만든다 (heater용, topAir용 등)
+2. 각 노드의 Properties에서 Coloring을 동일 필드(`T`)로 두되, **Edit Color Map**의 `Use Separate Color Map` 옵션을 켠다
+3. 각 노드의 `Rescale to Data Range`로 자체 범위에 맞춤
 
 ![heater 영역의 온도 분포 (15초, 75초)](../figures/13_temp_heater.jpg)
 

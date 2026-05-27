@@ -195,6 +195,31 @@ interFoam
 
 ### 3.3 후처리
 
+**Slice - 물의 체적 분율**
+
 해석 결과는 아래와 같다. (아래 결과는 원래의 격자를 2배 세분할하여 해석한 결과이다.)
 
-![시간 단계 별 물의 체적 분율의 등치선 플롯](../figures/8_result1.jpg)
+![시간 단계 별 물의 체적 분율 분포](../figures/8_result1.jpg)
+
+**Contour - 상 간 계면 추적**
+
+VOF의 핵심적인 시각화 기법으로 **물과 공기의 경계**인 $\alpha_{water}=0.5$ 등면을 관찰한다. **Contour**는 스칼라 필드의 특정 값에 해당하는 곡선(2D) 또는 곡면(3D)을 추출하는 기능이며, VOF에서는 자유표면을 추출하는 표준 방법으로 활용된다.
+
+1. Pipeline Browser에서 케이스 노드 선택
+2. 메뉴 `Filters > Common > Contour`
+3. Properties 패널에서
+   - **Contour By**: `alpha.water`
+   - **Isosurfaces**: `0.5` (필요 시 `+` 버튼으로 0.1, 0.5, 0.9 같이 여러 값 추가)
+   - **Compute Normals**: 체크 (음영 부드럽게)
+   - **Representation**: Feature Edges
+4. `Apply`
+
+결과는 아래와 같다. (아래 결과는 격자를 세분할하지 않고 해석한 결과이다.)
+
+![시간 단계 별 상 간 계면 분포](../figures/8_result2.png)
+
+> **Note:** 추출된 등치선의 색상을 다른 필드(예: $|U|$, 압력)로 매핑하면 자유표면 위에서 해당 필드의 분포를 확인할 수 있다. 색상 드롭다운에서 `Solid Color` 대신 `U` 또는 `p` 등을 선택한다.
+
+**시간 진행 — 댐 붕괴 추적**
+
+VCR ![](../figures/paraview_icons/time_play.png)로 재생하면 댐이 무너지면서 자유표면이 어떻게 변형되는지 시계열로 관찰할 수 있다.
