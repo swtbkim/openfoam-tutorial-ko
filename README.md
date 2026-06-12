@@ -3,13 +3,13 @@
 [![License: CC BY-NC-SA 3.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 [![OpenFOAM](https://img.shields.io/badge/OpenFOAM-v2412-blue)](https://www.openfoam.com/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-24.04%20WSL2-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![Tutorials](https://img.shields.io/badge/%EC%98%88%EC%A0%9C-17%EA%B0%9C-success)](#예제-목록)
+[![Tutorials](https://img.shields.io/badge/%EC%98%88%EC%A0%9C-18%EA%B0%9C-success)](#예제-목록)
 
-OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. OpenFOAM의 설치부터 격자 생성, 다상 유동, 난류, 병렬 처리, 화학 반응, 다물리 해석(전자기·전기화학) 등 OpenFOAM의 기본적인 사용법과 응용을 18개 예제를 통해 다룬다.
+OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. OpenFOAM의 설치부터 격자 생성, 다상 유동, 난류, 병렬 처리, 화학 반응, 다물리 해석(전자기·전기화학), 사용자 정의 솔버 개발 등 OpenFOAM의 기본적인 사용법과 응용을 19개 예제를 통해 다룬다.
 
 ## 구성
 
-이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1~14)을 한국어로 번역한 자료에, 4개 예제(예제 0, 15, 16, 17)를 추가하여 구성하였다.
+이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1~14)을 한국어로 번역한 자료에, 5개 예제(예제 0, 15, 16, 17, 18)를 추가하여 구성하였다.
 
 각 예제는 아래의 구조로 구성된다.
 
@@ -47,12 +47,13 @@ OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. Open
 | [15](./tutorials/15_직류-코로나-방전.md) | 직류 코로나 방전 | `electrostaticFoam` | 2D, 와이어-평판 방전 |
 | [16](./tutorials/16_산화-환원-흐름-전지.md) | 산화 환원 흐름 전지 | `RfbFoam` (외부 솔버) | 3D, 흐름전지 half cell |
 | [17](./tutorials/17_고체-산화물-연료-전지.md) | 고체 산화물 연료 전지 (SOFC) | `openFuelCell2` (외부 솔버) | 3D, SOFC unit cell |
+| [18](./tutorials/18_사용자-정의-솔버-만들기-전기수력학.md) | 사용자 정의 솔버 만들기 : 전기수력학 | `electrostaticSimpleFoam` (사용자 정의) | 2D, 와이어-평판 전기집진기 |
 
 ## 학습 순서
 
-OpenFOAM을 처음 학습하는 사용자는 예제 0부터 순서대로 진행하는 것을 권장한다. 각 예제는 이전 예제에서 다룬 개념 및 설정 방법을 참조하여 반복 설명을 생략하기 때문에, 한 예제를 건너뛰면 다음 예제의 설명이 불충분할 수 있다. 또한, 특정 모델의 사용법에 대한 설명이 주를 이루는 일부 예제(8, 11, 15, 16, 17)를 제외한 나머지 예제들은 일반적인 CFD 해석 및 OpenFOAM 활용에 거의 필수적인 이론(유체역학, 수치해석 등)과 사용법(형상 정의, 격자 생성, 모델 설정, 후처리 기법 등)을 다루기 때문에, 임의로 생략하는 것은 권장하지 않는다.
+OpenFOAM을 처음 학습하는 사용자는 예제 0부터 순서대로 진행하는 것을 권장한다. 각 예제는 이전 예제에서 다룬 개념 및 설정 방법을 참조하여 반복 설명을 생략하기 때문에, 한 예제를 건너뛰면 다음 예제의 설명이 불충분할 수 있다. 또한, 특정 모델의 사용법에 대한 설명이 주를 이루는 일부 예제(8, 11, 15, 16, 17, 18)를 제외한 나머지 예제들은 일반적인 CFD 해석 및 OpenFOAM 활용에 거의 필수적인 이론(유체역학, 수치해석 등)과 사용법(형상 정의, 격자 생성, 모델 설정, 후처리 기법 등)을 다루기 때문에, 임의로 생략하는 것은 권장하지 않는다.
 
-특정 주제만 참고하려는 경우, 위 목차에서 관련 예제로 바로 이동할 수 있다. 외부 솔버를 사용하는 예제 16, 17은 OpenFOAM 기본 사용법에 익숙해진 뒤에 학습하는 것을 권장한다.
+특정 주제만 참고하려는 경우, 위 목차에서 관련 예제로 바로 이동할 수 있다. 외부 솔버를 사용하는 예제 16, 17과 사용자 정의 솔버 작성을 다루는 예제 18은 OpenFOAM 기본 사용법에 익숙해진 뒤에 학습하는 것을 권장한다.
 
 ## 라이선스
 
