@@ -3,13 +3,13 @@
 [![License: CC BY-NC-SA 3.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%203.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 [![OpenFOAM](https://img.shields.io/badge/OpenFOAM-v2412-blue)](https://www.openfoam.com/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-24.04%20WSL2-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
-[![Tutorials](https://img.shields.io/badge/%EC%98%88%EC%A0%9C-19%EA%B0%9C-success)](#예제-목록)
+[![Tutorials](https://img.shields.io/badge/%EC%98%88%EC%A0%9C-22%EA%B0%9C-success)](#예제-목록)
 
-OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. OpenFOAM의 설치부터 격자 생성, 다상 유동, 난류, 병렬 처리, 화학 반응, 다물리 해석(전자기·전기화학), 사용자 정의 솔버 개발 등 OpenFOAM의 기본적인 사용법과 응용을 20개 예제를 통해 다룬다.
+OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. OpenFOAM의 설치부터 격자 생성, 다상 유동, 난류, 병렬 처리, 화학 반응, 다물리 해석(전자기·전기화학), 사용자 정의 솔버 개발 등 OpenFOAM의 기본적인 사용법과 응용을 23개 예제를 통해 다룬다.
 
 ## 구성
 
-이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1~14)을 한국어로 번역한 자료에, 6개 예제(예제 0, 15, 16, 17, 18, 19)를 추가하여 구성하였다.
+이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1~14)을 한국어로 번역한 자료에, 9개 예제(예제 0, 15~22)를 추가하여 구성하였다.
 
 각 예제는 아래의 구조로 구성된다.
 
@@ -17,6 +17,8 @@ OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. Open
 2. **전처리**: 케이스 파일 구성 및 입력 설정 방법
 3. **솔버 실행**: 솔버 실행 방법과 관련 명령어
 4. **후처리**: ParaView 등을 이용한 결과 분석
+
+단, 예제 0(설치 및 솔버 목록)과 예제 20(preCICE 연성 해석 환경 구성)은 해석 케이스를 다루지 않으므로 이 구조를 따르지 않는다.
 
 ## 호환성
 
@@ -48,13 +50,16 @@ OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. Open
 | [16](./tutorials/16_산화-환원-흐름-전지.md) | 산화 환원 흐름 전지 | `RfbFoam` (외부 솔버) | 3D, 흐름전지 half cell |
 | [17](./tutorials/17_고체-산화물-연료-전지.md) | 고체 산화물 연료 전지 (SOFC) | `openFuelCell2` (외부 솔버) | 3D, SOFC unit cell |
 | [18](./tutorials/18_사용자-정의-솔버-만들기-전기수력학.md) | 사용자 정의 솔버 만들기 : 전기수력학 | `electrostaticSimpleFoam` (사용자 정의) | 2D, 와이어-평판 전기집진기 |
-| [19](./tutorials/19_다상-유동-복합-열전달.md) | 다상 유동 + 복합 열전달 : 제트 충돌 냉각 | `chtMultiRegionInterFoam` (외부 솔버) | 3D, 핀-휜 히트싱크 |
+| [19](./tutorials/19_다상-유동-복합-열전달.md) | 액체 제트 충돌 냉각 | `chtMultiRegionInterFoam` (외부 솔버) | 3D, 핀-휜 히트싱크 |
+| [20](./tutorials/20_FSI1-preCICE-연성-해석-환경-구성.md) | FSI1: preCICE 연성 해석 환경 구성 | — | — |
+| [21](./tutorials/21_FSI2-유체-구조-연성-해석-preCICE-CalculiX.md) | FSI2: 유체-구조 연성 해석 (FSI) | `pimpleFoam` + CalculiX (preCICE 연성) | 2D, 수직 탄성 플랩 |
+| [22](./tutorials/22_FSI3-열-유체-구조-연성-해석-열응력-열변형.md) | FSI3: 열-유체-구조 연성 해석 (열응력에 의한 열변형) | `buoyantBoussinesqPimpleFoam` + CalculiX (preCICE 연성) | 2D, 이중층(바이메탈) 플랩 |
 
 ## 학습 순서
 
-OpenFOAM을 처음 학습하는 사용자는 예제 0부터 순서대로 진행하는 것을 권장한다. 각 예제는 이전 예제에서 다룬 개념 및 설정 방법을 참조하여 반복 설명을 생략하기 때문에, 한 예제를 건너뛰면 다음 예제의 설명이 불충분할 수 있다. 또한, 특정 모델의 사용법에 대한 설명이 주를 이루는 일부 예제(8, 11, 15, 16, 17, 18, 19)를 제외한 나머지 예제들은 일반적인 CFD 해석 및 OpenFOAM 활용에 거의 필수적인 이론(유체역학, 수치해석 등)과 사용법(형상 정의, 격자 생성, 모델 설정, 후처리 기법 등)을 다루기 때문에, 임의로 생략하는 것은 권장하지 않는다.
+OpenFOAM을 처음 학습하는 사용자는 먼저 예제 0~14를 순서대로 진행하는 것을 권장한다. 각 예제는 일반적인 CFD 해석 및 OpenFOAM 활용에 거의 필수적인 이론(유체역학, 수치해석 등)과 사용법(형상 정의, 격자 생성, 모델 설정, 후처리 기법 등)을 함께 다루며, 이전 예제에서 다룬 개념 및 설정 방법을 참조하여 반복 설명을 생략한다. 한 예제를 건너뛰면 다음 예제의 설명이 불충분할 수 있기 때문에, 임의로 생략하는 것은 권장하지 않는다.
 
-특정 주제만 참고하려는 경우, 위 목차에서 관련 예제로 바로 이동할 수 있다. 외부 솔버를 사용하는 예제 16, 17, 19와 사용자 정의 솔버 작성을 다루는 예제 18은 OpenFOAM 기본 사용법에 익숙해진 뒤에 학습하는 것을 권장한다.
+그 이후의 예제는 특정 분야에서 사용되는 특정 모델의 사용법에 대한 설명이 주를 이룬다. 외부 솔버를 사용하거나 코드 수정, 해석 환경 구성 등 숙련도를 요하는 작업이 주를 이루므로, OpenFOAM 기본 사용법에 익숙해진 뒤에 학습하는 것을 권장한다.
 
 ## 라이선스
 
