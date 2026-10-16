@@ -53,7 +53,7 @@ OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. Open
 | [19](./tutorials/19_다상-유동-복합-열전달.md) | 액체 제트 충돌 냉각 | `chtMultiRegionInterFoam` (외부 솔버) | 3D, 핀-휜 히트싱크 |
 | [20](./tutorials/20_FSI1-preCICE-연성-해석-환경-구성.md) | FSI1: preCICE 연성 해석 환경 구성 | — | — |
 | [21](./tutorials/21_FSI2-유체-구조-연성-해석-preCICE-CalculiX.md) | FSI2: 유체-구조 연성 해석 (FSI) | `pimpleFoam` + CalculiX (preCICE 연성) | 2D, 수직 탄성 플랩 |
-| [22](./tutorials/22_FSI3-열-유체-구조-연성-해석-열응력-열변형.md) | FSI3: 열-유체-구조 연성 해석 (열응력에 의한 열변형) | `buoyantBoussinesqPimpleFoam` + CalculiX (preCICE 연성) | 2D, 이중층(바이메탈) 플랩 |
+| [22](./tutorials/22_FSI3-열-유체-구조-연성-해석-열응력-열변형.md) | FSI3: 열-유체-구조 연성 해석 | `buoyantBoussinesqPimpleFoam` + CalculiX (preCICE 연성) | 2D, 이중층(바이메탈) 플랩 |
 
 ## 학습 순서
 

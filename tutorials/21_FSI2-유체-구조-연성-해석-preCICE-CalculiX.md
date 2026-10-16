@@ -10,12 +10,12 @@
 **호환성**:
 
 - 이 예제의 명령어와 설정 파일은 [예제 0](00_Ubuntu-24.04-WSL-및-OpenFOAM-v2412-설치-OpenFOAM-솔버-목록.md)의 방법으로 설치한 OpenFOAM v2412 (WSL2, Ubuntu 24.04, /opt/OpenFOAM-v2412 소스 빌드) 환경을 기준으로 작성되었다.
-- [예제 20](20_preCICE-연성-해석-환경-구성.md)에서 구성한 환경(preCICE v3.4.1, OpenFOAM-preCICE 어댑터 v1.4.0, CalculiX-preCICE 어댑터 v2.20.2 (CalculiX 2.20))을 그대로 사용하며, 새로 설치할 것은 없다. 해석 케이스는 preCICE 튜토리얼 저장소의 커밋 `e3188113`을 사용한다.
+- [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)에서 구성한 환경(preCICE v3.4.1, OpenFOAM-preCICE 어댑터 v1.4.0, CalculiX-preCICE 어댑터 v2.20.2 (CalculiX 2.20))을 그대로 사용하며, 새로 설치할 것은 없다. 해석 케이스는 preCICE 튜토리얼 저장소의 커밋 `e3188113`을 사용한다.
 - 해석은 약 40초 걸린다.
 
 **선행 학습**:
 
-- [예제 20. preCICE 연성 해석 환경 구성](20_preCICE-연성-해석-환경-구성.md) : **필수**. preCICE와 CalculiX 어댑터 설치, 환경 스크립트(`~/precice/precice-of-env.sh`), OpenFOAM-preCICE 어댑터 빌드
+- [예제 20. preCICE 연성 해석 환경 구성](20_FSI1-preCICE-연성-해석-환경-구성.md) : **필수**. preCICE와 CalculiX 어댑터 설치, 환경 스크립트(`~/precice/precice-of-env.sh`), OpenFOAM-preCICE 어댑터 빌드
 - [예제 7. 난류 - 비정상 상태](07_난류-비정상-상태.md) : 비정상 비압축성 유동 해석
 - [예제 9. 병렬 계산 기법](09_병렬-계산-기법.md) : `decomposePar`, `mpirun`을 이용한 병렬 계산
 - [예제 18. 사용자 정의 솔버 만들기](18_사용자-정의-솔버-만들기-전기수력학.md) : 운동학적 압력
@@ -103,7 +103,7 @@ FSI 해석 방법은 다음과 같은 기준으로 분류할 수 있다.
 
 ### 1.3 preCICE
 
-[예제 20](20_preCICE-연성-해석-환경-구성.md)의 1장에서 소개한 것과 같이, **preCICE**(Precise Code Interaction Coupling Environment)는 서로 다른 해석 프로그램을 분할 방식으로 연성하기 위한 오픈 소스 라이브러리이다[3]. 각 해석 프로그램은 어댑터(adapter)를 통해 preCICE에 연결되며, preCICE는 해석 프로그램 사이의 통신, 서로 다른 격자 사이의 데이터 보간(mapping), 시간 진행 조율, 암시적 반복과 가속을 담당한다.
+[예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)의 1장에서 소개한 것과 같이, **preCICE**(Precise Code Interaction Coupling Environment)는 서로 다른 해석 프로그램을 분할 방식으로 연성하기 위한 오픈 소스 라이브러리이다[3]. 각 해석 프로그램은 어댑터(adapter)를 통해 preCICE에 연결되며, preCICE는 해석 프로그램 사이의 통신, 서로 다른 격자 사이의 데이터 보간(mapping), 시간 진행 조율, 암시적 반복과 가속을 담당한다.
 
 preCICE에서 사용하는 주요 개념은 다음과 같다.
 
@@ -151,7 +151,7 @@ OpenFOAM으로 양방향 FSI 해석을 하는 방법은 여러 가지가 있다.
 | preCICE + CalculiX | 검증된 유한요소 구조 솔버를 그대로 사용. 공식 패키지와 공식 참조 결과가 제공되어 설치를 정량적으로 검증할 수 있다. 구조 솔버를 다른 것으로 바꾸기 쉽다 | 설치할 요소가 많고, 두 프로그램을 동시에 실행해야 한다 |
 | 단방향 연성 | 가장 간단하다 | 이 예제처럼 변형이 유동을 바꾸는 문제에는 사용할 수 없다 |
 
-이 예제는 preCICE + CalculiX 조합을 사용하며, 설치는 [예제 20](20_preCICE-연성-해석-환경-구성.md)에서 다룬다.
+이 예제는 preCICE + CalculiX 조합을 사용하며, 설치는 [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)에서 다룬다.
 
 > **Note:** FreeCAD의 FEM 워크벤치도 구조 솔버로 CalculiX를 사용하지만, FreeCAD에 포함된 `ccx`는 preCICE 연결 코드가 들어 있지 않은 일반 CalculiX 실행 파일이므로 양방향 연성에 사용할 수 없다(Windows용 FreeCAD의 `ccx.exe`는 WSL의 OpenFOAM과 연결할 수도 없다). 대신 FreeCAD에서 형상, 격자, 재료, 고정 조건을 만들어 `.inp` 파일로 내보낸 뒤, 연성 경계면의 절점 집합, `*CLOAD`, `*DYNAMIC` 단계와 config.yml을 직접 추가하여 `ccx_preCICE`의 입력으로 사용할 수는 있다(4.5절 참조). 이 방법은 이 예제에서 다루지 않는다.
 
@@ -184,7 +184,7 @@ OpenFOAM으로 양방향 FSI 해석을 하는 방법은 여러 가지가 있다.
 
 ## 3. 해석 환경 확인
 
-이 예제는 [예제 20](20_preCICE-연성-해석-환경-구성.md)에서 구성한 환경을 사용한다. 새 터미널을 열어 환경 스크립트를 불러오고, preCICE와 어댑터를 사용할 수 있는지 확인한다.
+이 예제는 [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)에서 구성한 환경을 사용한다. 새 터미널을 열어 환경 스크립트를 불러오고, preCICE와 어댑터를 사용할 수 있는지 확인한다.
 
 ```bash
 source ~/precice/precice-of-env.sh
@@ -1099,6 +1099,10 @@ paraFoam
 
 ![변형된 격자 위의 유속 크기 분포 : 최대 변위 부근(t = 0.7 s, 위)과 플랩이 되돌아온 시점(t = 1.5 s, 아래)](../figures/21_flow_fields.png)
 
+다음 애니메이션은 0–5 s 동안 플랩이 진동하면서 유속 크기 분포가 바뀌는 모습이다. 아래쪽 그래프는 5.2절의 플랩 끝단 x 방향 변위로, 빨간 선은 현재 시각까지의 값, 빨간 점은 현재 시각의 값이고, 회색 선은 남은 시간의 값이다. 실제 시간과 같은 속도로 재생된다. 이 애니메이션은 유체 결과의 저장 간격(system/controlDict의 `writeInterval`)을 0.1 s에서 0.05 s로 줄여 다시 실행한 결과를 Python(matplotlib)으로 그린 것이다. 저장 간격 외의 설정은 같으므로 해석 결과는 4.6절의 해석과 같다.
+
+![플랩의 진동과 유속 크기 분포의 시간 변화 (위 : 변형된 격자 위의 유속 크기 / 아래 : 플랩 끝단의 x 방향 변위)](../figures/21_flow_animation.gif)
+
 시간 디렉토리에는 일반적인 `U`, `p`, `phi` 외에 다음 필드가 함께 저장된다.
 
 | 필드 | 의미 |
@@ -1151,7 +1155,7 @@ cd fluid-openfoam && paraFoam
 
 ## 7. 문제 해결
 
-설치와 환경 스크립트에 관한 문제는 [예제 20](20_preCICE-연성-해석-환경-구성.md)의 6장을 함께 참조한다.
+설치와 환경 스크립트에 관한 문제는 [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)의 6장을 함께 참조한다.
 
 | 증상 | 원인 | 해결 |
 | --- | --- | --- |
@@ -1191,7 +1195,7 @@ export OMPI_MCA_hwloc_base_use_hwthreads_as_cpus=1
 - **기하학적 비선형 해석** : flap.inp의 `*STEP`에 `NLGEOM`을 추가하고 결과를 비교해 보라. 큰 변형에서 선형 해석의 오차를 확인할 수 있다.
 - **모드 축소 모델** : solid-calculix/run.sh에 `-modal` 옵션을 주면, frequency.inp로 고유 모드를 먼저 계산한 뒤 몇 개의 모드만으로 구조 응답을 계산하는 축소 모델(flap_modal.inp)로 연성 해석을 수행한다.
 - **FreeCAD로 만든 구조 모델** : 1.5절의 Note처럼 FreeCAD에서 구조물의 격자, 재료, 고정 조건을 만들어 `.inp` 파일로 내보내고, 연성 경계면의 절점 집합과 `*CLOAD`, `*DYNAMIC` 단계, config.yml을 추가하면 임의 형상의 구조물을 연성할 수 있다.
-- **열 연성 (CHT)** : 같은 OpenFOAM-preCICE 어댑터의 `CHT` 모듈을 사용하면 유체와 고체 사이의 열전달을 연성할 수 있다. [예제 22](22_열-유체-구조-연성-해석-열응력-열변형.md)에서는 이 예제의 케이스에 열 연성을 더하여 열응력에 의한 열변형을 해석한다. OpenFOAM끼리 열 연성하는 preCICE 튜토리얼의 flow-over-heated-plate 케이스도 참고한다.
+- **열 연성 (CHT)** : 같은 OpenFOAM-preCICE 어댑터의 `CHT` 모듈을 사용하면 유체와 고체 사이의 열전달을 연성할 수 있다. [예제 22](22_FSI3-열-유체-구조-연성-해석-열응력-열변형.md)에서는 이 예제의 케이스에 열 연성을 더하여 열응력에 의한 열변형을 해석한다. OpenFOAM끼리 열 연성하는 preCICE 튜토리얼의 flow-over-heated-plate 케이스도 참고한다.
 
 ## 9. 참고 문헌
 
