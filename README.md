@@ -9,7 +9,7 @@ OpenFOAM의 주요 기능을 학습하기 위한 한국어 예제집이다. Open
 
 ## 구성
 
-이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1~14)을 한국어로 번역한 자료에, 9개 예제(예제 0, 15~22)를 추가하여 구성하였다.
+이 예제집은 Technische Universität Wien, Institute of Chemical, Environmental & Bioscience Engineering의 **OpenFOAM Basic Training, 5th edition (2019)** ([www.cfd.at/tutorials](https://www.cfd.at/tutorials), 예제 1\~14)을 한국어로 번역한 자료에, 9개 예제(예제 0, 15\~22)를 추가하여 구성하였다.
 
 각 예제는 아래의 구조로 구성된다.
 
