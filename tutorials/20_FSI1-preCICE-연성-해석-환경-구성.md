@@ -2,7 +2,7 @@
 
 **참고**:
 
-- 이 예제는 연성 라이브러리 [preCICE](https://precice.org)를 이용하여 OpenFOAM과 다른 해석 프로그램을 연성 해석하기 위한 환경을 구성하고, 환경이 동작하는지 검증한다. 해석 케이스는 다루지 않으며, 여기서 구성한 환경은 예제 21(유체-구조 연성 해석)과 예제 22(열-유체-구조 연성 해석)에서 사용한다.
+- 이 예제는 연성 라이브러리 [preCICE](https://precice.org)를 이용하여 OpenFOAM과 다른 해석 프로그램을 연성 해석하기 위한 환경을 구성하고, 환경이 동작하는지 검증한다. 해석 케이스는 다루지 않으며, 여기서 구성한 환경은 [예제 21](21_FSI2-유체-구조-연성-해석-preCICE-CalculiX.md)(유체-구조 연성 해석)과 [예제 22](22_FSI3-열-유체-구조-연성-해석-열응력-열변형.md)(열-유체-구조 연성 해석)에서 사용한다.
 - 사용하는 외부 소프트웨어의 라이선스는 다음과 같다: preCICE (LGPL 3.0), OpenFOAM-preCICE 어댑터 (GPL 3.0), CalculiX-preCICE 어댑터 (GPL 3.0), CalculiX (GPL 2.0).
 - 이 예제는 OpenFOAM 튜토리얼(한국어판)에 새로 추가된 내용으로, [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) 라이선스 하에 배포된다.
 - 이 자료는 ESI Group, ESI-OpenCFD 또는 OpenFOAM Foundation에 의해 승인된 자료가 아니다.
