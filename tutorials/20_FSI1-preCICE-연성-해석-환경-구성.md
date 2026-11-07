@@ -51,7 +51,7 @@
 - 모놀리식(monolithic) 방식 : 모든 물리 현상의 방정식을 하나의 프로그램에서 함께 푼다. 연성 문제마다 전용 코드가 필요하다.
 - 분할(partitioned) 방식 : 각 물리 현상을 검증된 전문 해석 프로그램으로 따로 풀고, 경계면의 데이터만 주고받는다. 예를 들어 유체는 OpenFOAM으로, 구조물은 유한요소 해석 프로그램으로 푼다.
 
-**preCICE**(Precise Code Interaction Coupling Environment)는 분할 방식 연성을 위한 오픈 소스 라이브러리이다[1]. 연성에 참여하는 해석 프로그램을 **participant**라 하며, preCICE는 participant 사이의 통신, 서로 다른 격자 사이의 데이터 보간, 시간 진행의 조율을 맡는다. 연성 해석을 할 때는 participant마다 별도의 프로그램(프로세스)을 동시에 실행한다. 이 책의 예제 21, 22에서는 두 프로그램을 같은 컴퓨터에서 실행하고 TCP 소켓으로 데이터를 주고받으며, 그 구성은 다음과 같다.
+**preCICE**(Precise Code Interaction Coupling Environment)는 분할 방식 연성을 위한 오픈 소스 라이브러리이다[1]. 연성에 참여하는 해석 프로그램들을 **participant**라 하고, preCICE는 participant 사이의 통신, 서로 다른 격자 사이의 데이터 보간, 시간 진행의 조율을 맡는다. 연성 해석을 할 때는 participant마다 별도의 프로그램(프로세스)을 동시에 실행한다. 예제 21, 22에서는 한 컴퓨터에서 두 프로그램을 동시에 실행하고 TCP 소켓으로 데이터를 주고받는다.
 
 ```text
  terminal 1                                 terminal 2
@@ -64,7 +64,7 @@
                   +------ interface data (TCP sockets) ------+
 ```
 
-두 프로그램이 모두 preCICE 라이브러리를 불러오므로, 3.3절에서 다루는 라이브러리 충돌 문제는 두 프로그램 모두에 해당한다. 연성의 이론(경계면 조건, 시간 창, 암시적 반복, 데이터 보간)과 preCICE 설정 파일은 예제 21에서 다루고, 이 예제에서는 연성 해석을 실행하는 데 필요한 프로그램을 설치하고 확인한다.
+두 프로그램이 모두 preCICE 라이브러리를 불러오므로, 3.3절에서 다루는 라이브러리 충돌 문제는 두 프로그램 모두에 해당한다. 연성의 이론(경계면 조건, 시간 구간, 암시적 반복, 데이터 보간)과 preCICE 설정 파일은 예제 21에서 다루고, 이 예제에서는 연성 해석을 실행하는 데 필요한 프로그램을 설치하고 확인한다.
 
 ### 1.2 어댑터
 
@@ -131,7 +131,7 @@ $FOAM_USER_LIBBIN/libpreciceAdapterFunctionObject.so   (어댑터 라이브러�
 
 ### 3.2 preCICE 및 CalculiX 어댑터 설치
 
-preCICE와 CalculiX 어댑터는 Ubuntu 24.04(코드명 noble)용 `.deb` 패키지가 공식 배포된다. 작업 디렉토리를 만들고 패키지와 체크섬 파일을 다운로드한다.
+preCICE와 CalculiX 어댑터는 Ubuntu 24.04 (noble)용 `.deb` 패키지가 공식 배포된다. 작업 디렉토리를 만들고 패키지와 체크섬 파일을 다운로드한다.
 
 ```bash
 mkdir -p ~/precice/debs && cd ~/precice/debs
@@ -308,11 +308,11 @@ ls $FOAM_USER_LIBBIN/libpreciceAdapterFunctionObject.so
 
 ## 4. 설치 검증
 
-3장의 버전 확인은 각 프로그램이 실행되는지만 보여 준다. 연성 해석에서는 이에 더하여 OpenFOAM 솔버가 실행 중에 어댑터 라이브러리를 불러와야 하고, 두 프로그램이 preCICE로 연결되어 데이터를 주고받아야 한다. 이 장에서는 이 두 가지를 해석 케이스 없이 확인한다. 이 장의 명령은 모두 환경 스크립트를 불러온 터미널에서 실행한다.
+3장의 버전 확인은 각 프로그램이 제대로 실행되는지만 보여 준다. 실제로 연성 해석을 진행하려면, 이에 더하여 OpenFOAM 솔버가 실행 중에 어댑터 라이브러리를 불러와야 하고, 두 해석 프로그램이 preCICE로 연결되어 데이터를 주고받아야 한다. 이 장에서는 이 두 가지를 해석 케이스 없이 확인한다. 이 장의 명령은 모두 환경 스크립트를 불러온 터미널에서 실행한다.
 
 ### 4.1 어댑터 불러오기 확인
 
-OpenFOAM 솔버는 controlDict의 `libs` 항목에 적힌 라이브러리를 실행을 시작할 때 불러온다. OpenFOAM 유틸리티 `foamHasLibrary`는 같은 방법으로 라이브러리를 불러 보고, 그 결과를 출력한다. `-verbose`를 주면 불러오기에 성공했을 때도 결과를 출력한다(주지 않으면 실패했을 때만 출력한다).
+OpenFOAM 솔버는 솔버 실행 시 controlDict의 `libs` 항목에 적힌 라이브러리를 불러온다. OpenFOAM 유틸리티 `foamHasLibrary`는 같은 방법으로 라이브러리를 불러 보고, 그 결과를 출력한다. `-verbose`를 주면 불러오기에 성공했을 때도 결과를 출력한다(주지 않으면 실패했을 때만 출력한다).
 
 ```bash
 source ~/precice/precice-of-env.sh
@@ -335,7 +335,7 @@ Could not load "libpreciceAdapterFunctionObject.so"
 
 ### 4.2 연성 시험 : solverdummy
 
-preCICE 패키지에는 연성 기능만 시험하는 작은 C++ 프로그램 **solverdummy**의 소스 코드가 들어 있다(/usr/share/precice/examples/solverdummies/). solverdummy는 실제 해석을 하지 않고, 점 3개로 된 mesh에서 임의의 값을 주고받는다. 같은 프로그램을 participant 이름만 바꾸어(`SolverOne`, `SolverTwo`) 두 번 실행하면, preCICE가 두 프로그램을 연결하여 2개의 시간 창 동안 데이터를 교환한다. **시간 창**(time window)은 두 프로그램이 경계면 데이터를 주고받으며 함께 진행하는 시간 구간으로, 자세한 의미는 예제 21의 1.3절에서 다룬다. 연성 해석과 같이 두 프로그램을 동시에 실행하는 절차를 미리 연습하는 의미도 있다.
+preCICE 패키지는 연성 기능만 간단히 시험해볼 수 있도록 구성된 작은 프로그램 **solverdummy**를 함께 제공한다(/usr/share/precice/examples/solverdummies/). solverdummy는 실제 해석을 하지 않고, 점 3개로 된 mesh에서 임의의 값을 주고받는다. 같은 프로그램을 participant 이름만 바꾸어(`SolverOne`, `SolverTwo`) 두 번 실행하면, preCICE가 두 프로그램을 연결하여 2개의 시간 구간 동안 데이터를 교환한다. **시간 구간**(time window)은 두 프로그램이 경계면 데이터를 주고받으며 함께 진행하는 시간 구간으로, 자세한 의미는 예제 21의 1.3절에서 다룬다. 연성 해석과 같이 두 프로그램을 동시에 실행하는 절차를 미리 연습하는 의미도 있다.
 
 소스 디렉토리는 관리자만 쓸 수 있으므로 ~/precice/로 복사한 뒤, 예제 0에서 설치한 `cmake`로 빌드한다. 빌드도 환경 스크립트를 불러온 터미널에서 한다.
 
@@ -383,7 +383,7 @@ preCICE: Close communication channels
 DUMMY: Closing C++ solver dummy...
 ```
 
-`Reached end at: final time-window: 2, final time: 2`가 출력되면 두 프로그램이 preCICE로 연결되어 마지막 시간 창까지 데이터를 주고받은 것이다. 출력 중 `it 1`, `it 2`는 한 시간 창 안의 반복 번호이고, `Writing iteration checkpoint`와 `Reading iteration checkpoint`는 반복을 위해 시간 창 시작 시점의 상태를 저장하고 되돌리는 동작이다. 이 시험의 설정 파일(solverdummies/precice-config.xml)은 시간 창마다 정확히 2번 반복하도록 되어 있으며, 반복과 체크포인트의 의미는 예제 21의 1.3절에서 설명한다.
+`Reached end at: final time-window: 2, final time: 2`가 출력되면 두 프로그램이 preCICE로 연결되어 마지막 시간 구간까지 데이터를 주고받은 것이다. 출력 중 `it 1`, `it 2`는 한 시간 구간 안의 반복 번호이고, `Writing iteration checkpoint`와 `Reading iteration checkpoint`는 반복을 위해 시간 구간 시작 시점의 상태를 저장하고 되돌리는 동작이다. 이 시험의 설정 파일(solverdummies/precice-config.xml)은 시간 구간마다 정확히 2번 반복하도록 되어 있으며, 반복과 체크포인트의 의미는 예제 21의 1.3절에서 설명한다.
 
 > **Note:** 출력의 앞부분에 `No convergence measures were defined for an implicit coupling scheme. It will always iterate the maximum amount iterations, which is 2.`라는 안내가 나온다. 이 시험의 설정 파일에 수렴 기준이 없어 항상 최대 반복 횟수(2회)만큼 반복한다는 뜻으로, 오류가 아니다.
 
