@@ -11,7 +11,6 @@
 
 - 이 예제의 명령어와 설정 파일은 [예제 0](00_Ubuntu-24.04-WSL-및-OpenFOAM-v2412-설치-OpenFOAM-솔버-목록.md)의 방법으로 설치한 OpenFOAM v2412 (WSL2, Ubuntu 24.04, /opt/OpenFOAM-v2412 소스 빌드) 환경을 기준으로 작성되었다.
 - [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)에서 구성한 환경(preCICE v3.4.1, OpenFOAM-preCICE 어댑터 v1.4.0, CalculiX-preCICE 어댑터 v2.20.2 (CalculiX 2.20))을 그대로 사용하며, 새로 설치할 것은 없다. 해석 케이스는 preCICE 튜토리얼 저장소의 커밋 `e3188113`을 사용한다.
-- 해석은 약 40초 걸린다.
 
 **선행 학습**:
 
@@ -29,7 +28,6 @@
    - 1.2 연성 방식의 분류
    - 1.3 preCICE
    - 1.4 이동 격자
-   - 1.5 이 예제의 도구 선택
 2. 예제 개요
 3. 해석 환경 확인
 4. 해석
@@ -56,14 +54,14 @@
 
 ### 1.1 유체-구조 연성 해석 (FSI)
 
-유체 속의 구조물은 유체로부터 압력과 전단력을 받아 변형된다. 구조물이 변형되면 유체가 흐르는 영역의 형상이 바뀌고, 그 결과 유동장과 구조물에 작용하는 힘도 다시 바뀐다. 이처럼 유체와 구조가 서로 영향을 주고받는 현상을 **유체-구조 연성**(Fluid-Structure Interaction, FSI)이라 한다. 바람에 흔들리는 깃발, 혈관 벽의 박동, 열교환기 튜브의 유체 유발 진동(flow-induced vibration), 항공기 날개의 플러터(flutter), 심장 판막 등이 대표적인 예이다.
+유체 속의 구조물은 유체로부터 압력과 전단력을 받아 변형된다. 구조물이 변형되면 유체가 흐르는 영역의 형상이 바뀌고, 그 결과 유동장과 구조물에 작용하는 힘도 다시 바뀐다. 이처럼 유체와 구조가 서로 영향을 주고받는 현상에 대한 시뮬레이션을 **유체-구조 연성**(Fluid-Structure Interaction, FSI) 해석이라 한다. 바람에 흔들리는 깃발, 혈관 벽의 박동, 열교환기 튜브의 유체 유발 진동(flow-induced vibration), 항공기 날개의 플러터(flutter), 심장 판막 등이 대표적인 예이다.
 
-FSI 해석은 두 종류의 물리를 함께 풀어야 한다.
+FSI 해석은 두 종류의 물리 현상을 함께 풀어야 한다.
 
 - **유체** : 비압축성 Navier-Stokes 방정식 → OpenFOAM의 `pimpleFoam`
 - **구조** : 탄성체의 운동 방정식 → 유한요소 해석 프로그램 CalculiX
 
-두 영역은 경계면(interface) $\Gamma$에서 다음 두 조건으로 연결된다.
+두 솔버의 각 해석 영역은 경계면(interface) $\Gamma$에서 아래의 두 조건으로 연결된다.
 
 - **운동학적 조건**(kinematic condition) : 경계면에서 유체의 속도는 구조물의 속도와 같다 (점착(no-slip) 조건).
 
@@ -88,18 +86,13 @@ FSI 해석 방법은 다음과 같은 기준으로 분류할 수 있다.
 
 단방향 연성은 유체 해석을 먼저 끝낸 뒤 그 결과(압력 분포)를 구조 해석의 하중으로 넣으면 되므로, 압력을 구조 격자로 옮기는 보간 작업만 하면 별도의 연성 라이브러리 없이도 수행할 수 있다.
 
-어느 쪽이 필요한지는 다음과 같이 판단한다. 먼저 구조물을 움직이지 않는 벽으로 두고 유동을 푼 뒤, 그 하중으로 구조 해석을 한 번 해 본다(단방향). 계산된 변위가 구조물 주변의 유동을 결정하는 길이(구조물의 두께, 간극, 경계층 두께 등)에 비해 무시할 수 있을 만큼 작으면 단방향으로 충분하다. 변위가 그보다 크거나, 구조물의 진동 자체가 관심 대상이면 양방향 연성이 필요하다. 이 예제의 플랩 끝단은 0.2 m까지 휘는데, 이는 플랩 두께(0.1 m)의 2배, 높이의 20%이므로 **양방향 연성**이 필요하다.
-
-#### 모놀리식(monolithic) 방식과 분할(partitioned) 방식
-
-- 모놀리식 방식 : 유체와 구조의 방정식을 하나의 행렬로 묶어 동시에 푼다. 강건하지만, 전용 코드가 필요하다.
-- 분할 방식 : 검증된 유체 솔버와 구조 솔버를 각각 그대로 사용하고, 경계면 데이터만 주고받는다. 각 분야의 전문 솔버를 재사용할 수 있다는 장점이 있다. preCICE가 이 방식을 위한 연성 라이브러리이다.
+어느 쪽이 필요한지는 다음과 같이 판단한다. 먼저 구조물을 움직이지 않는 벽으로 두고 유동을 푼 뒤, 그 하중으로 구조 해석을 한 번 해 본다(단방향). 계산된 변위의 길이 스케일이 구조물 주변의 유동을 결정하는 길이(구조물의 두께, 간극, 경계층 두께 등)에 비해 무시할 수 있을 만큼 작으면 단방향으로 충분하다. 변위가 그보다 크거나, 구조물의 진동 자체가 관심 대상이면 양방향 연성이 필요하다. 이 예제의 플랩 끝단은 0.2 m까지 휘는데, 이는 플랩 두께(0.1 m)의 2배, 높이의 20%이므로 **양방향 연성**이 필요하다.
 
 #### 명시적(explicit) 연성과 암시적(implicit) 연성
 
 분할 방식에서 시간 간격마다 데이터를 한 번씩만 교환하는 것을 명시적(또는 약한, weak) 연성이라 하고, 경계면 조건이 만족될 때까지 한 시간 간격 안에서 두 솔버를 반복 실행하는 것을 암시적(또는 강한, strong) 연성이라 한다.
 
-> **Note:** 구조물의 밀도가 유체의 밀도와 비슷하거나 작을 때(예: 물속의 막, 혈관 벽), 명시적 연성은 시간 간격을 아무리 줄여도 발산할 수 있다. 구조물이 움직일 때 함께 밀려나는 주변 유체의 관성이 구조물에 추가 질량처럼 작용하는데, 분할 방식은 이 효과를 한 단계 늦게 반영하기 때문이다. 이를 **부가 질량 효과**(added-mass effect)라 한다[1]. 이 경우 암시적 연성과, 반복 횟수를 줄여 주는 준-뉴턴(quasi-Newton) 가속 기법(예: IQN-ILS[2])이 필요하다. 이 예제의 플랩은 구조 밀도가 유체 밀도의 3000배이므로 부가 질량 효과가 크지 않지만, 처음부터 암시적 연성과 IQN-ILS를 쓰는 표준 설정을 익혀 둔다.
+> **Note:** 구조물의 밀도가 유체의 밀도와 비슷하거나 작을 때(예: 물속의 막, 혈관 벽), 명시적 연성은 시간 간격을 아무리 줄여도 발산할 수 있다. 구조물이 움직일 때 함께 밀려나는 주변 유체의 관성이 구조물에 추가 질량처럼 작용하는데, 분할 방식은 이 효과를 한 단계 늦게 반영하기 때문이다. 이를 **부가 질량 효과**(added-mass effect)라 한다[1]. 이 경우 암시적 연성과, 반복 횟수를 줄여 주는 준-뉴턴(quasi-Newton) 가속 기법(예: IQN-ILS[2])이 필요하다. 이 예제의 플랩은 구조물의 밀도가 유체 밀도의 3000배이므로 부가 질량 효과가 크지 않지만, 처음부터 암시적 연성과 IQN-ILS를 쓰는 표준 설정을 익혀 둔다.
 
 ### 1.3 preCICE
 
@@ -119,17 +112,19 @@ preCICE에서 사용하는 주요 개념은 다음과 같다.
 
 ![preCICE를 이용한 분할 방식 연성의 구조](../figures/21_coupling.png)
 
-두 솔버가 경계면 데이터를 주고받는 시간 구간을 **시간 창**(time window)이라 한다. 이 예제에서는 유체 솔버의 시간 간격과 같은 0.01 s이다. 암시적 연성에서는 한 시간 창을 여러 번 다시 계산할 수 있어야 하므로, 시간 창이 시작될 때의 해를 저장해 두는데 이를 **체크포인트**(checkpoint)라 한다. 그림 아래쪽과 같이, 암시적 연성의 한 시간 창은 다음 순서로 진행된다.
+두 솔버가 경계면 데이터를 주고받는 시간 구간을 **시간 구간**(time window)이라 한다. 이 예제에서는 유체 솔버의 시간 간격과 같은 0.01 s이다. 암시적 연성에서는 한 시간 구간을 여러 번 다시 계산할 수 있어야 하므로, 시간 구간이 시작될 때의 해를 저장해 두는데 이를 **체크포인트**(checkpoint)라 한다. 그림 아래쪽과 같이, 암시적 연성의 한 시간 구간은 다음 순서로 진행된다.
 
 1. 두 participant가 각각 현재 상태를 체크포인트로 저장한다.
 2. 유체는 현재 추정 변위로 격자를 움직이고 유동을 풀어 힘을 계산하고, 동시에(parallel) 구조는 현재 추정 힘으로 변형을 계산한다.
 3. preCICE가 힘과 변위를 교환한다.
 4. 반복 사이의 변화량이 수렴 기준보다 크면, preCICE가 IQN-ILS로 다음 추정값을 만들고 두 participant 모두 체크포인트로 되돌아가서 2번부터 반복한다.
-5. 수렴하면 다음 시간 창으로 넘어간다.
+5. 수렴하면 다음 시간 구간으로 넘어간다.
 
 유체 mesh의 점(플랩 면 중심)과 구조 mesh의 점(CalculiX 절점)은 위치가 서로 다르므로, 힘과 변위를 옮기려면 보간이 필요하다. **RBF 보간**은 각 점을 중심으로 거리에 따라 작아지는 종 모양의 함수를 겹쳐 놓아, 점의 위치가 서로 다른 두 mesh 사이에서 값을 부드럽게 옮기는 방법이다.
 
-OpenFOAM은 **OpenFOAM-preCICE 어댑터**를 통해 preCICE에 연결된다[4]. 이 어댑터는 함수 객체(function object) 형태의 라이브러리이므로, `pimpleFoam` 같은 표준 솔버를 **수정하지 않고** controlDict에서 불러오기만 하면 연성 해석에 참여할 수 있다. CalculiX는 preCICE 연결 기능을 추가하여 다시 컴파일한 별도의 실행 파일 `ccx_preCICE`를 사용한다.
+OpenFOAM은 **OpenFOAM-preCICE 어댑터**를 통해 preCICE에 연결된다[4]. 이 어댑터는 함수 객체(function object) 형태의 라이브러리이므로, `pimpleFoam` 같은 표준 솔버를 **수정하지 않고** controlDict에서 불러오기만 하면 연성 해석에 참여할 수 있다. 반면에 CalculiX는 원본 프로그램을 그대로 사용하지 않고, preCICE 연결 기능을 추가하여 다시 컴파일한 별도의 실행 파일 `ccx_preCICE`를 사용한다.
+
+> **Note:** FreeCAD의 FEM 워크벤치도 구조 솔버로 CalculiX를 사용하지만, FreeCAD에 포함된 `ccx`는 preCICE 연결 코드가 들어 있지 않은 일반 CalculiX 실행 파일이므로 양방향 연성에 사용할 수 없다(Windows용 FreeCAD의 `ccx.exe`는 WSL의 OpenFOAM과 연결할 수도 없다). 대신 FreeCAD에서 형상, 격자, 재료, 고정 조건을 만들어 `.inp` 파일로 내보낸 뒤, 연성 경계면의 절점 집합, `*CLOAD`, `*DYNAMIC` 단계와 config.yml을 직접 추가하여 `ccx_preCICE`의 입력으로 사용할 수는 있다(4.5절 참조). 이 방법은 이 예제에서 다루지 않는다.
 
 ### 1.4 이동 격자
 
@@ -140,20 +135,6 @@ OpenFOAM은 **OpenFOAM-preCICE 어댑터**를 통해 preCICE에 연결된다[4].
 $$\nabla \cdot \left( \gamma \nabla \vec{d} \right) = 0$$
 
 여기서 $\gamma$는 확산 계수이다. 플랩에 가까운 격자일수록 $\gamma$를 크게 주면 플랩 주변의 격자는 거의 강체처럼 함께 움직이고, 격자의 찌그러짐은 플랩에서 먼 곳으로 분산된다. 연성 해석에서 경계면(플랩 표면)의 변위는 preCICE가 매 반복마다 구조 해석 결과로부터 전달한다.
-
-### 1.5 이 예제의 도구 선택
-
-OpenFOAM으로 양방향 FSI 해석을 하는 방법은 여러 가지가 있다. ESI 판 OpenFOAM v2412에는 양방향 FSI 솔버가 기본으로 포함되어 있지 않으며(`solidDisplacementFoam`은 선형 탄성, 소변형(small-strain) 고체만 푼다), 다음과 같은 방법을 사용할 수 있다.
-
-| 방법 | 특징 | 제약 |
-| --- | --- | --- |
-| solids4foam[5] | OpenFOAM 안에서 유체와 고체를 모두 유한체적법으로 푸는 툴박스. 대변형, 초탄성 재료 지원 | 지원하는 OpenFOAM 버전을 확인하고 따로 빌드해야 한다 |
-| preCICE + CalculiX | 검증된 유한요소 구조 솔버를 그대로 사용. 공식 패키지와 공식 참조 결과가 제공되어 설치를 정량적으로 검증할 수 있다. 구조 솔버를 다른 것으로 바꾸기 쉽다 | 설치할 요소가 많고, 두 프로그램을 동시에 실행해야 한다 |
-| 단방향 연성 | 가장 간단하다 | 이 예제처럼 변형이 유동을 바꾸는 문제에는 사용할 수 없다 |
-
-이 예제는 preCICE + CalculiX 조합을 사용하며, 설치는 [예제 20](20_FSI1-preCICE-연성-해석-환경-구성.md)에서 다룬다.
-
-> **Note:** FreeCAD의 FEM 워크벤치도 구조 솔버로 CalculiX를 사용하지만, FreeCAD에 포함된 `ccx`는 preCICE 연결 코드가 들어 있지 않은 일반 CalculiX 실행 파일이므로 양방향 연성에 사용할 수 없다(Windows용 FreeCAD의 `ccx.exe`는 WSL의 OpenFOAM과 연결할 수도 없다). 대신 FreeCAD에서 형상, 격자, 재료, 고정 조건을 만들어 `.inp` 파일로 내보낸 뒤, 연성 경계면의 절점 집합, `*CLOAD`, `*DYNAMIC` 단계와 config.yml을 직접 추가하여 `ccx_preCICE`의 입력으로 사용할 수는 있다(4.5절 참조). 이 방법은 이 예제에서 다루지 않는다.
 
 ## 2. 예제 개요
 
@@ -166,7 +147,7 @@ OpenFOAM으로 양방향 FSI 해석을 하는 방법은 여러 가지가 있다.
 - 유체 물성 : 밀도 $\rho_f$ = 1 $\mathrm{kg/m^3}$, 동점성 계수 $\nu_f$ = 1 $\mathrm{m^2/s}$, 층류
 - 구조 물성 : 밀도 $\rho_s$ = 3000 $\mathrm{kg/m^3}$, 영률 $E$ = 4 MPa, 푸아송 비 $\nu_s$ = 0.3, 선형 탄성
 - 경계 조건 : 입구 유속 10 m/s (균일), 출구 압력 0, 채널 위아래 벽면과 플랩 표면은 점착 조건
-- 시간 : 0–5 s, 시간 간격 0.01 s (= preCICE의 시간 창 크기)
+- 시간 : 0–5 s, 시간 간격 0.01 s (= preCICE의 시간 구간 크기)
 
 ![해석 영역과 경계 조건](../figures/21_setup.png)
 
@@ -220,12 +201,17 @@ cd ~/precice
 ```
 
 ```bash
-C=e31881130d79a160fde1ad9f4da3324f8d310b63
-wget -O tutorials-e3188113.tar.gz https://github.com/precice/tutorials/archive/$C.tar.gz
-tar xzf tutorials-e3188113.tar.gz && mv tutorials-$C tutorials
+git clone --depth 1 https://github.com/precice/tutorials.git
+cd tutorials
+git fetch --depth 1 origin e31881130d79a160fde1ad9f4da3324f8d310b63
+git checkout e31881130d79a160fde1ad9f4da3324f8d310b63
 ```
 
-튜토리얼의 실행 스크립트는 공통 보조 스크립트가 들어 있는 tools/ 디렉토리를 상대 경로(../../tools/)로 참조한다. 따라서 perpendicular-flap/ 디렉토리와 tools/ 디렉토리를 같은 상위 디렉토리 아래에 함께 복사해야 한다.
+> **Note:** GitHub는 커밋을 해시로 fetch할 때 40자짜리 전체 해시만 받는다. `e3188113`처럼 짧은 해시는 브랜치나 태그 이름으로 해석되기 때문에 “couldn't find remote ref” 오류가 발생한다.
+
+예제 케이스 디렉토리를 생성하고, perpendicular-flap/ 예제를 복사한다.
+
+> **Note:** preCICE의 tutorials에 내장된 실행 스크립트는 모든 예제에서 공통으로 활용되는 보조 스크립트가 들어 있는 tools/ 디렉토리를 상대 경로(../../tools/)로 참조한다. 따라서 tools/ 디렉토리를 perpendicular-flap/ 디렉토리와 같은 상위 디렉토리(preciceFSI/) 아래에 함께 복사해야 한다.
 
 ```bash
 mkdir -p $FOAM_RUN/preciceFSI
@@ -364,21 +350,21 @@ precice-config.xml은 연성 해석 전체를 정의하는 파일이다. 두 par
 - `mapping:rbf direction="read"` : 구조 mesh의 변위를 유체 mesh로 보간한다. 변위는 각 점에서 정의되는 값이므로 보간값이 원래 분포를 그대로 재현해야 한다. 이를 위해 `constraint="consistent"`를 사용한다. 즉 상수 변위는 보간 후에도 같은 상수 변위가 된다.
 - `basis-function:compact-polynomial-c6` : RBF 보간(1.3절)에 쓰는 함수의 종류이며, `support-radius`(1 m)는 한 점의 값이 영향을 미치는 거리이다.
 
-**watch-point** : `Solid-Mesh` 위의 좌표 (0, 1), 즉 플랩 끝단의 변위와 힘을 매 시간 창마다 파일(precice-Solid-watchpoint-Flap-Tip.log)에 기록한다. 5절에서 이 파일로 결과를 검증한다.
+**watch-point** : `Solid-Mesh` 위의 좌표 (0, 1), 즉 플랩 끝단의 변위와 힘을 매 시간 구간마다 파일(precice-Solid-watchpoint-Flap-Tip.log)에 기록한다. 5절에서 이 파일로 결과를 검증한다.
 
 **m2n:sockets** : 두 participant는 TCP 소켓으로 통신한다. 소켓은 같은 컴퓨터 안의 두 프로그램이 네트워크 방식으로 데이터를 주고받는 통로로, 인터넷 연결은 필요 없다(m2n은 M개 프로세스와 N개 프로세스 사이의 통신이라는 뜻이다). 먼저 실행된 쪽이 상대방을 기다리며, 연결 정보는 `exchange-directory=".."`, 즉 participant 디렉토리의 상위 디렉토리(perpendicular-flap/)에 생성되는 precice-run/ 디렉토리를 통해 주고받는다.
 
-**coupling-scheme:parallel-implicit** : 연성 방식을 정의한다. 한 시간 창의 진행 순서는 1.3절의 그림과 설명을 참조한다.
+**coupling-scheme:parallel-implicit** : 연성 방식을 정의한다. 한 시간 구간의 진행 순서는 1.3절의 그림과 설명을 참조한다.
 
 | 항목 | 값 | 의미 |
 | --- | --- | --- |
-| `parallel-implicit` | — | 두 participant가 한 반복 안에서 동시에 계산(parallel)하고, 수렴할 때까지 시간 창을 반복(implicit)한다 |
-| `time-window-size` | 0.01 | 데이터를 교환하는 시간 창의 크기 [s] |
+| `parallel-implicit` | — | 두 participant가 한 반복 안에서 동시에 계산(parallel)하고, 수렴할 때까지 시간 구간을 반복(implicit)한다 |
+| `time-window-size` | 0.01 | 데이터를 교환하는 시간 구간의 크기 [s] |
 | `max-time` | 5 | 연성 해석의 종료 시간 [s]. 유체 솔버의 endTime 대신 이 값이 해석의 종료를 결정한다 |
 | `exchange` | Force, Displacement | 교환할 데이터와 방향. 두 데이터 모두 `Solid-Mesh` 위에서 교환된다 |
-| `max-iterations` | 50 | 시간 창당 최대 반복 횟수 |
+| `max-iterations` | 50 | 시간 구간당 최대 반복 횟수 |
 | `relative-convergence-measure` | 5e-3 | 반복 사이 데이터 변화량의 상대 크기가 0.5% 미만이면 수렴으로 판정 |
-| `acceleration:IQN-ILS` | — | 이전 반복들의 정보로 다음 추정값을 개선하는 준-뉴턴 가속. 맨 처음 시간 창의 첫 반복에서만 이완 계수 0.5의 단순 이완을 사용하고, 이후에는 최근 15개 시간 창의 반복 정보(최대 100개)를 재사용하여 첫 반복부터 준-뉴턴 갱신을 적용한다 |
+| `acceleration:IQN-ILS` | — | 이전 반복들의 정보로 다음 추정값을 개선하는 준-뉴턴 가속. 맨 처음 시간 구간의 첫 반복에서만 이완 계수 0.5의 단순 이완을 사용하고, 이후에는 최근 15개 시간 구간의 반복 정보(최대 100개)를 재사용하여 첫 반복부터 준-뉴턴 갱신을 적용한다 |
 
 > **Note:** preCICE 설정 파일의 문법과 기본적인 설정 오류는 해석 전에 `precice-config-validate precice-config.xml` 명령으로 미리 확인할 수 있다(환경 스크립트를 불러온 터미널에서 실행한다). 오류가 없으면 `No major issues detected`가 출력된다.
 
@@ -470,7 +456,7 @@ functions
 - `libs` : 예제 20의 3.5절에서 빌드한 어댑터 라이브러리를 불러온다.
 - `preCICE_Adapter` : 어댑터를 함수 객체로 등록한다. 함수 객체는 매 시간 간격마다 솔버가 호출하므로, 솔버의 소스 코드를 수정하지 않고도 경계면 데이터를 읽고 쓰는 동작을 끼워 넣을 수 있다.
 - `errors strict` : 어댑터에서 오류가 발생하면 경고만 출력하고 계속 진행하는 대신 솔버를 즉시 멈춘다. 연성 해석에서 한쪽만 조용히 계속 진행되는 것을 막아 준다.
-- `deltaT 0.01` : preCICE의 시간 창 크기와 같게 설정한다. 해석이 시작되면 어댑터가 `endTime`을 무한대로 바꾸고, 해석의 종료는 preCICE의 `max-time`이 결정한다.
+- `deltaT 0.01` : preCICE의 시간 구간 크기와 같게 설정한다. 해석이 시작되면 어댑터가 `endTime`을 무한대로 바꾸고, 해석의 종료는 preCICE의 `max-time`이 결정한다.
 
 > **Note:** `libs`를 최상위에 쓰면 `blockMesh`, `decomposePar` 같은 유틸리티도 어댑터를 불러오며, 환경 스크립트 없이 실행하면 `Could not load "libpreciceAdapterFunctionObject.so"` 경고가 출력된다(유틸리티 자체는 정상 동작한다). `libs` 항목을 `preCICE_Adapter { ... }` 안으로 옮기면 함수 객체를 실행하는 솔버만 어댑터를 불러온다. 사용자 케이스를 새로 만들 때는 이 방식을 권장한다.
 
@@ -812,7 +798,7 @@ fluid exit code = 0, solid exit code = 0 (0 = success)
 
 > **Note:** preCICE 메시지에는 색상 제어 문자(`ESC[0m`)가 들어 있다. 터미널에서는 보이지 않지만 로그 파일을 편집기로 열면 `^[[0m`처럼 표시되므로, 로그 파일은 `tail -f`나 `less -R log.fluid`로 보는 것이 좋다.
 
-해석이 진행되면 시간 창마다 반복 번호(`it`)가 출력된다. 같은 시간 창(`time-window`)에 대해 `it 1`, `it 2`, ... 가 반복되는 것이 암시적 연성의 반복이다.
+해석이 진행되면 시간 구간마다 반복 번호(`it`)가 출력된다. 같은 시간 구간(`time-window`)에 대해 `it 1`, `it 2`, ... 가 반복되는 것이 암시적 연성의 반복이다.
 
 ```text
 Time = 0.45
@@ -822,7 +808,7 @@ Time = 0.46
 Time = 0.46
 ```
 
-OpenFOAM의 `Time =`은 지금 계산하는 시간 간격의 끝 시각이고, preCICE의 `t`는 시간 창의 시작 시각이다. 따라서 첫 줄의 `Time = 0.45`는 시간 창 45의 마지막 계산이다. 이어서 시간 창 46의 첫 번째 반복(`it 1`)에서 `Time = 0.46`을 계산하였으나 수렴하지 않았으므로, 어댑터가 유동장을 체크포인트(t = 0.45)로 되돌린 뒤 두 번째 반복(`it 2`)에서 `Time = 0.46`을 다시 계산하였다. 그래서 `Time = 0.46`이 두 번 출력된다. 해석이 끝나면 다음과 같이 출력된다.
+OpenFOAM의 `Time =`은 지금 계산하는 시간 간격의 끝 시각이고, preCICE의 `t`는 시간 구간의 시작 시각이다. 따라서 첫 줄의 `Time = 0.45`는 시간 구간 45의 마지막 계산이다. 이어서 시간 구간 46의 첫 번째 반복(`it 1`)에서 `Time = 0.46`을 계산하였으나 수렴하지 않았으므로, 어댑터가 유동장을 체크포인트(t = 0.45)로 되돌린 뒤 두 번째 반복(`it 2`)에서 `Time = 0.46`을 다시 계산하였다. 그래서 `Time = 0.46`이 두 번 출력된다. 해석이 끝나면 다음과 같이 출력된다.
 
 ```text
 ---[precice]  Time window completed
@@ -866,7 +852,7 @@ preCICE는 각 participant 디렉토리에 연성 반복에 대한 로그 파일
 cd $FOAM_RUN/preciceFSI/perpendicular-flap
 ```
 
-**fluid-openfoam/precice-Fluid-iterations.log** : 시간 창마다 반복 횟수와 수렴 여부를 기록한다.
+**fluid-openfoam/precice-Fluid-iterations.log** : 시간 구간마다 반복 횟수와 수렴 여부를 기록한다.
 
 ```bash
 head -4 fluid-openfoam/precice-Fluid-iterations.log
@@ -879,7 +865,7 @@ head -4 fluid-openfoam/precice-Fluid-iterations.log
      3      10       3       1
 ```
 
-`Convergence`가 1이면 그 시간 창이 수렴 조건을 만족한 것이고, 0이면 `max-iterations`(50)에 도달하여 수렴하지 못한 채 다음 시간 창으로 넘어간 것이다. 모든 시간 창이 수렴했는지는 아래 명령으로 확인한다.
+`Convergence`가 1이면 그 시간 구간이 수렴 조건을 만족한 것이고, 0이면 `max-iterations`(50)에 도달하여 수렴하지 못한 채 다음 시간 구간으로 넘어간 것이다. 모든 시간 구간이 수렴했는지는 아래 명령으로 확인한다.
 
 ```bash
 awk 'NR>1 {n++; c+=$4; it+=$3; if ($3>m) m=$3}
@@ -891,9 +877,9 @@ awk 'NR>1 {n++; c+=$4; it+=$3; if ($3>m) m=$3}
 500 windows, 500 converged, total 1006 iterations, max 4 per window
 ```
 
-500개 시간 창이 모두 수렴하였고, 대부분의 시간 창에서 2회의 반복으로 수렴하였다(처음 몇 개의 시간 창만 3–4회). 구조/유체 밀도비가 3000으로 연성이 약하고, IQN-ILS 가속이 이전 시간 창의 정보를 재사용하기 때문에 반복 횟수가 적다.
+500개 시간 구간이 모두 수렴하였고, 대부분의 시간 구간에서 2회의 반복으로 수렴하였다(처음 몇 개의 시간 구간만 3–4회). 구조/유체 밀도비가 3000으로 연성이 약하고, IQN-ILS 가속이 이전 시간 구간의 정보를 재사용하기 때문에 반복 횟수가 적다.
 
-**solid-calculix/precice-Solid-convergence.log** : 반복마다 변위와 힘의 상대 변화량(`ResRel`)을 기록한다. 두 값이 모두 수렴 기준(5e-3) 아래로 떨어지면 다음 시간 창으로 넘어간다.
+**solid-calculix/precice-Solid-convergence.log** : 반복마다 변위와 힘의 상대 변화량(`ResRel`)을 기록한다. 두 값이 모두 수렴 기준(5e-3) 아래로 떨어지면 다음 시간 구간으로 넘어간다.
 
 ```text
   TimeWindow  Iteration  ResRel(Solid-Mesh:Displacement)  ResRel(Solid-Mesh:Force)
@@ -1041,7 +1027,7 @@ saved compare.png
 
 ![플랩 끝단의 x 방향 변위 (위 : 이 예제(빨간색), 같은 조합의 참조 결과(검은 점선), 다른 솔버 조합의 참조 결과(회색) / 아래 : 이 예제와 같은 조합 참조 결과의 차이)](../figures/21_tip_displacement.png)
 
-이 예제의 결과는 참조 결과와 사실상 일치한다. 위 그림의 아래쪽 그래프에서 보듯이 두 결과의 차이는 최대 0.03 mm, 즉 최대 변위의 0.016%로, 시간 창마다 허용하는 반복 간 변화량(0.5%)보다 훨씬 작다. 따라서 예제 20에서 설치한 preCICE, 두 어댑터, CalculiX가 이 예제에 쓰인 기능(RBF 보간, 암시적 연성, IQN-ILS 가속)에 대해 공식 환경과 같은 결과를 낸다고 판단할 수 있다. 책의 그림에는 비교를 위해 다른 솔버 조합의 결과(회색)를 추가로 그렸으며, compare.py가 만드는 compare.png에는 회색 곡선이 없다.
+이 예제의 결과는 참조 결과와 사실상 일치한다. 위 그림의 아래쪽 그래프에서 보듯이 두 결과의 차이는 최대 0.03 mm, 즉 최대 변위의 0.016%로, 시간 구간마다 허용하는 반복 간 변화량(0.5%)보다 훨씬 작다. 따라서 예제 20에서 설치한 preCICE, 두 어댑터, CalculiX가 이 예제에 쓰인 기능(RBF 보간, 암시적 연성, IQN-ILS 가속)에 대해 공식 환경과 같은 결과를 낸다고 판단할 수 있다. 책의 그림에는 비교를 위해 다른 솔버 조합의 결과(회색)를 추가로 그렸으며, compare.py가 만드는 compare.png에는 회색 곡선이 없다.
 
 > **Note:** 결과가 비트 단위로 같지 않은 것은 소프트웨어 버전과 시스템의 차이 때문이다. 특히 preCICE v3.2부터 IQN-ILS 가속의 전처리기 가중치 갱신 방식의 기본값이 바뀌었는데, precice-config.xml의 `<acceleration:IQN-ILS>` 안에 `<preconditioner type="residual-sum" update-on-threshold="false" />`를 추가하여 이전 동작으로 되돌리면 차이가 약 1/6($5 \times 10^{-6}$ m)로 줄어든다. 그 밖에 OpenFOAM(v2312 → v2412), 두 어댑터(v1.3.0 → v1.4.0, v2.20.1 → v2.20.2), 운영체제와 컴파일러(Ubuntu 22.04 → 24.04)의 차이가 남은 차이의 원인이다.
 
@@ -1128,12 +1114,14 @@ ccx_preCICE -v
 
 # 1) get the tutorial case (pinned commit) and the reference results
 cd ~/precice
-C=e31881130d79a160fde1ad9f4da3324f8d310b63
-wget -O tutorials-e3188113.tar.gz https://github.com/precice/tutorials/archive/$C.tar.gz
-tar xzf tutorials-e3188113.tar.gz && mv tutorials-$C tutorials
+git clone --depth 1 https://github.com/precice/tutorials.git
+cd tutorials
+git fetch --depth 1 origin e31881130d79a160fde1ad9f4da3324f8d310b63
+git checkout e31881130d79a160fde1ad9f4da3324f8d310b63
 mkdir -p $FOAM_RUN/preciceFSI
 cp -r ~/precice/tutorials/tools ~/precice/tutorials/perpendicular-flap $FOAM_RUN/preciceFSI/
 cd $FOAM_RUN/preciceFSI/perpendicular-flap/reference-results
+C=e31881130d79a160fde1ad9f4da3324f8d310b63
 R=https://media.githubusercontent.com/media/precice/tutorials/$C/perpendicular-flap
 wget -O watchpoints.tar.gz $R/reference-results/watchpoints.tar.gz
 tar xzf watchpoints.tar.gz
@@ -1169,7 +1157,7 @@ cd fluid-openfoam && paraFoam
 | `./runFSI.sh: Permission denied` | 실행 권한 없음 | `chmod +x runFSI.sh` |
 | watchpoints.tar.gz 압축 해제 시 `gzip: stdin: not in gzip format` | 실제 파일 대신 Git LFS 포인터 파일(약 130바이트 텍스트)을 압축 해제함 | 5.3절의 media.githubusercontent.com 주소로 다시 다운로드. `ls -l watchpoints.tar.gz`로 본 크기가 약 330 kB이면 정상 |
 | `mpirun` 실행 시 `There are not enough slots available` | 요청한 프로세스 수가 가용 코어 수보다 많음 | decomposeParDict의 `numberOfSubdomains`와 `simpleCoeffs`의 `n`을 함께 줄이거나(예: `numberOfSubdomains 2;`, `n (2 1 1);`, n의 곱이 영역 수와 같아야 함), 표 아래 첫 번째 Note의 환경 변수로 하이퍼스레드를 슬롯으로 인정한다 |
-| 어떤 시간 창에서 `Convergence`가 0 | `max-iterations` 안에 수렴하지 못함 | 시간 창 크기를 줄이거나, IQN-ILS 설정(`initial-relaxation` 등)을 조정 |
+| 어떤 시간 구간에서 `Convergence`가 0 | `max-iterations` 안에 수렴하지 못함 | 시간 구간 크기를 줄이거나, IQN-ILS 설정(`initial-relaxation` 등)을 조정 |
 
 > **Note:** 하이퍼스레드를 MPI 슬롯으로 인정하려면 해석을 시작하는 터미널에서 먼저 아래 명령을 실행한다. 이 예제의 `mpirun`은 tools/run-openfoam.sh 안에서 호출되므로 `mpirun`의 명령행 옵션을 직접 줄 수 없다.
 
@@ -1184,7 +1172,7 @@ export OMPI_MCA_hwloc_base_use_hwthreads_as_cpus=1
 이 예제에서 학습한 내용을 요약하면 다음과 같다.
 
 - FSI 해석의 경계면 조건과 연성 방식의 분류 (단방향/양방향, 모놀리식/분할, 명시적/암시적, 부가 질량 효과)
-- preCICE의 구성 요소 (participant, mesh, data, mapping, coupling scheme, acceleration)와 시간 창, 체크포인트
+- preCICE의 구성 요소 (participant, mesh, data, mapping, coupling scheme, acceleration)와 시간 구간, 체크포인트
 - 표준 솔버(`pimpleFoam`)를 수정하지 않고 함수 객체로 연성 기능을 추가하는 방법과 이동 격자 설정
 - CalculiX 입력 파일의 구성과 연성 경계면 설정
 - 연성 수렴 확인, 공식 참조 결과와의 정량 비교, 고유 진동수와의 비교를 통한 해석 결과와 해석 환경(예제 20)의 검증
